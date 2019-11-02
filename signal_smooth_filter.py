@@ -7,7 +7,9 @@ import math
 ### spectra codes are based on Eric J Oliver MATLAB codes ######
 #****************************** power spectrum *************************##
 def spec(signal,sample_freq,window_type,alpha,**kwargs):
-    
+    ##https://www1.udel.edu/biology/rosewc/kaap686/notes/windowing.html
+    ## Environmental data analysis with MATLAB-William Menke & Jashua Menke
+
     ##************************ signal must have even length.************##
     ## window=0 'no window'
     ## window=1 'Hamming window'
@@ -56,6 +58,8 @@ def spec(signal,sample_freq,window_type,alpha,**kwargs):
 #****************************** cross spectrum *************************##
 
 def xspec(x,y,sample_freq,window_type,**kwargs):
+    ## https://ecjoliver.weebly.com/code.html
+    ## http://www2.ocean.washington.edu/flowmow/processing/currents/coh/billtest/cohtest.html
     x=x-np.mean(x)
     y=y-np.mean(y)
     N=len(x)
@@ -93,11 +97,13 @@ def xspec(x,y,sample_freq,window_type,**kwargs):
 #****************************** coherence squared *************************##
 
 def spectra_pan(x,y,sample_freq,window_type,nwindow,alpha):
+    ## https://dsp.stackexchange.com/questions/10012/magnitude-squared-coherence-calculation-inconsistence
+    ## https://dsp.stackexchange.com/questions/16558/statistical-significance-of-coherence-values
     #      f    - frequencies
     # %   Pxx  - power spectrum of x
     # %   Pyy  - power spectrum of y
     # %   Pxy  - cross-spectrum of x and y
-    # %   Cxy  - coherence (not squared) between x and y
+    # %   Cxy  - coherence (squared) between x and y
     # %   C    - 5% significance level for coherence
     # %   Phxy - phase spectrum between x and y
     # %   cxy  - cospectrum between x and y
@@ -175,6 +181,9 @@ def spectra_pan(x,y,sample_freq,window_type,nwindow,alpha):
 #****************************** coherence square SCIPY and MATPLOTLIB ******************
 
 def spectra_scipy_matplotlib(x,y,sample_freq,window_type,nwindow,alpha):
+    ## https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.coherence.html
+    ## https://in.mathworks.com/help/signal/ref/mscohere.html
+    ## https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.cohere.html
     #      f1,f2    - scipy and mlab frequencies
     # %   Cxy1,Cxy2  - scipy and mlab coherence (not squared) between x and y
     #        k -       nperseg/NFFT/each window length 
@@ -259,6 +268,7 @@ def smooth_pan(timeseries,window_length):
 
 
 def smooth(x,window_len=11,window='hanning'):
+    ##https://scipy-cookbook.readthedocs.io/items/SignalSmooth.html
     """smooth the data using a window with requested size.
     
     This method is based on the convolution of a scaled window with the signal.
