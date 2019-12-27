@@ -2,11 +2,12 @@ import numpy as np
 import scipy as sc
 import matplotlib.pyplot as plt
 from scipy.stats.distributions import chi2
+from scipy import signal
 import math    
 
 ### spectra codes are based on Eric J Oliver MATLAB codes ######
 #****************************** power spectrum *************************##
-def spec(signal,sample_freq,window_type,alpha,**kwargs):
+def spec(sig,sample_freq,window_type,alpha,**kwargs):
     ##https://www1.udel.edu/biology/rosewc/kaap686/notes/windowing.html
     ## Environmental data analysis with MATLAB-William Menke & Jashua Menke
 
@@ -15,13 +16,13 @@ def spec(signal,sample_freq,window_type,alpha,**kwargs):
     ## window=1 'Hamming window'
     ## window=2 'Hanning window'
     
-    N=len(signal)                          #     no of points N
+    N=len(sig)                          #     no of points N
     Dt=sample_freq*1                       # sample frequency /rate
     T=N*Dt;                    
     fmax=1/(2*Dt);                         #     Nyquist (maximum) frequency,
     Df =fmax/(N/2);                        #     frequency interval,
     Nf=N/2+1;                              #     number of non-negative frequencies,#     frequency vector , #f=Df*[0:N/2,-N/2þ1:-1]’; 
-    signal=signal-np.mean(signal)
+    sig=sig-np.mean(sig)
     
     if window_type==1:
         w1=0.54-0.46*np.cos(2*np.pi*np.arange(N)/(N-1)) ## hamming window weight
@@ -30,7 +31,7 @@ def spec(signal,sample_freq,window_type,alpha,**kwargs):
     else:
         w1=1
     
-    signal1=w1*signal
+    signal1=w1*sig
     temp_fft = Dt*sc.fftpack.fft(signal1)
     fftfreq = np.fft.fftfreq(N,Dt)         # daily data it is 1./365 ## monthly data 1./12 ## yearly data=1
     temp_psd = temp_fft*np.conj(temp_fft)*(2/T)
@@ -39,7 +40,7 @@ def spec(signal,sample_freq,window_type,alpha,**kwargs):
     p = temp_psd[(fftfreq >= 0) | (fftfreq==-fmax)]
     
     #Null Hypothesis: time series is uncorrelated random noise
-    sd2est=np.std(signal);                   #   variance of time series,
+    sd2est=np.std(sig);                   #   variance of time series,
     ff=np.sum(w1*w1)/N;                        #   power in window function, 
     c = (ff*sd2est)/(2*Nf*Df);               #   scaling constant,  
     cl95 = c*chi2.ppf(1.0-alpha, df=2);           #   95% confidence level,
@@ -249,6 +250,30 @@ def filter_signal_scipy(signal,sample_freq,ltime_period,htime_period,keep_mean):
         filter_signal= np.real_if_close(sc.fftpack.ifft(inv_fft))
     
     return filter_signal
+
+
+#****************************   Low Pass Filter ********************************************** ##
+
+def lowpass_scipy(signal,sample_freq,time_period,keep_mean):
+    
+    lowpass_signal=np.zeros(signal.shape)
+    if any(np.isnan(signal)):
+        raise ValueError('There is NaN in the signal')
+    else:
+        hf = 1./time_period
+
+        temp_fft = sc.fftpack.fft(signal)
+
+        fftfreq = np.fft.fftfreq(len(signal),sample_freq) ### daily data it is 1./365 ## monthly data 1./12 ## yearly data=1
+          
+        i1 = np.abs(fftfreq) >= hf  
+        
+        temp_fft[i1] = 0
+        if not(keep_mean):
+            temp_fft[0]=0
+        lowpass_signal= np.real_if_close(sc.fftpack.ifft(temp_fft))
+    
+    return lowpass_signal
 
 #****************************** smoothing a signal with a flat window *************************##
 
