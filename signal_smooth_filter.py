@@ -252,7 +252,7 @@ def filter_signal_scipy(signal,sample_freq,ltime_period,htime_period,keep_mean):
     return filter_signal
 
 
-#****************************   Low Pass Filter ********************************************** ##
+#****************************   Low Pass Filter(FFT filter) ********************************************** ##
 
 def lowpass_scipy(signal,sample_freq,time_period,keep_mean):
     
@@ -273,6 +273,16 @@ def lowpass_scipy(signal,sample_freq,time_period,keep_mean):
             temp_fft[0]=0
         lowpass_signal= np.real_if_close(sc.fftpack.ifft(temp_fft))
     
+    return lowpass_signal
+
+#****************************   Low Pass Filter(Butter) ********************************************** ##
+
+def lowpass_scipy_butter(signal1,wn,lt):
+    from scipy import signal
+    w = 2/lt # Normalize the frequency
+    b, a = signal.butter(wn, w, 'low')
+    lowpass_signal = signal.filtfilt(b, a, signal1)
+
     return lowpass_signal
 
 #****************************** smoothing a signal with a flat window *************************##
