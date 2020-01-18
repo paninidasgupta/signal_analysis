@@ -254,7 +254,7 @@ def filter_signal_scipy(signal,sample_freq,ltime_period,htime_period,keep_mean):
 
 #****************************   Low Pass Filter(FFT filter) ********************************************** ##
 
-def lowpass_scipy(signal,sample_freq,time_period,keep_mean):
+def lowpass_scipy_fft(signal,sample_freq,time_period,keep_mean):
     
     lowpass_signal=np.zeros(signal.shape)
     if any(np.isnan(signal)):
