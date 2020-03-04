@@ -227,7 +227,7 @@ def spectra_scipy_matplotlib(x,y,sample_freq,window_type,nwindow,alpha):
     
     
     return f1,f2,Cxy1,Cxy2,C1,C2,k
-#****************************** filter signal *************************##
+#****************************** bandpass fft filter signal *************************##
 
 
 def filter_signal_scipy(signal,sample_freq,ltime_period,htime_period,keep_mean):
@@ -251,11 +251,21 @@ def filter_signal_scipy(signal,sample_freq,ltime_period,htime_period,keep_mean):
     
     return filter_signal
 
+# *************************** band pass butter filter ****************************************************##
+
+def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
+    from scipy.signal import butter, lfilter
+    nyq = 0.5 * fs
+    low = lowcut / nyq
+    high = highcut / nyq
+    print(1/low,1/high)
+    b, a = butter(order, [low, high], btype='band')
+    bandpass = lfilter(b, a, data)
+    return bandpass
 
 #****************************   Low Pass Filter(FFT filter) ********************************************** ##
 
 def lowpass_scipy_fft(signal,sample_freq,time_period,keep_mean):
-    
     lowpass_signal=np.zeros(signal.shape)
     if any(np.isnan(signal)):
         raise ValueError('There is NaN in the signal')
