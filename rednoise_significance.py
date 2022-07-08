@@ -54,7 +54,7 @@ def my_autocorr(x, t=1,plot=True,label=''):
     '''
     ac = [np.corrcoef(np.array([x[0:len(x)-i], x[i:len(x)]])) for i in np.arange(t)]
     acvsm = np.asarray(ac)[:,0,1]
-    
+    N     = len(x) 
     #Plot results
     if plot:
         plt.plot(np.arange(N/2),acvsm[:int(N/2)]/acvsm[0],marker='x',linestyle='--',label = label)
@@ -76,7 +76,7 @@ def autocorrelation_v1(x,label,plot=True):
     result = r/(variance*(np.arange(n, 0, -1))) # unbiased estimate?
     #Plot results
     if plot:
-        plt.plot(np.arange(N/2),result[:int(N/2)]/result[0],marker='x',linestyle='--',label = label)
+        plt.plot(np.arange(n/2),result[:int(n/2)]/result[0],marker='x',linestyle='--',label = label)
         plt.xlabel('Lag [months]')
         plt.ylabel('Autocorrelation C(t)')
         plt.legend()
